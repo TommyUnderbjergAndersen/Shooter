@@ -1,5 +1,6 @@
 #include <Ticker.h>
 #include "pitches.h"
+#include "index.h"  //Web page header file
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
@@ -38,9 +39,8 @@ Ticker t;
 // Webserver functions
 
 void handleRoot() {
-  //digitalWrite(led, 1);
-  server.send(200, "text/plain", "hello from esp8266!");
-  //digitalWrite(led, 0);
+  String s = MAIN_page; //Read HTML contents
+  server.send(200, "text/html", s); //Send web page
 }
 
 void handleNotFound() {
@@ -60,6 +60,10 @@ void handleNotFound() {
   //digitalWrite(led, 0);
 }
 
+void handleReadPoints(){
+  String scoreValue = String(score);
+  server.send(200, "text/plane", scoreValue);
+}
 
 void setup() {
   // initialize the LED pin as an output:
@@ -95,6 +99,8 @@ void setup() {
   }
 
   server.on("/", handleRoot);
+
+  server.on("/readPoints", handleReadPoints);
 
   server.on("/inline", []() {
     server.send(200, "text/plain", "this works as well");
